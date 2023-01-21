@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { TiPencil } from "react-icons/ti";
 import { BsTrash } from "react-icons/bs";
 import { toggleCompleted, removeTask } from '../store/toDoSlice';
@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 
 const TodoList = ({todo: {task, id, completed}, handleUpdate}) => {
   const dispatch = useDispatch()
-  console.log(completed)
   return (
     <div className='flex justify-between bg-Tangaroa rounded-md p-4 text-white items-center'>
       <div 
@@ -22,4 +21,4 @@ const TodoList = ({todo: {task, id, completed}, handleUpdate}) => {
   )
 }
 
-export default TodoList
+export default memo(TodoList)

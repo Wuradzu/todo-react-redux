@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import empty from "../assets/empty.jpg";
 
 const Empty = () => {
@@ -12,4 +12,4 @@ const Empty = () => {
   );
 };
 
-export default Empty;
+export default memo(Empty);

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {memo} from 'react'
 
 const Header = ({setShowModal}) => {
   return (
@@ -12,4 +12,4 @@ const Header = ({setShowModal}) => {
   )
 }
 
-export default Header
+export default memo(Header)

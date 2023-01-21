@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Modal = ({setShowModal, newTask, setNewTask, handleTask, currentTask}) => {
+const Modal = ({ setShowModal, updateTask, handleTask, currentTask }) => {
+  const [newTask, setNewTask] = useState(updateTask);
   return (
     <div
       onClick={() => setShowModal(false)}
@@ -23,10 +24,18 @@ const Modal = ({setShowModal, newTask, setNewTask, handleTask, currentTask}) => 
           >
             Cancel
           </button>
-          <button 
-          onClick={handleTask}
-          className="bg-sunsetOrange rounded-md px-3 py-2 text-white opacity-90 hover:opacity-100">
-            {currentTask ? 'Update' : 'Add'}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (newTask.trim().length === 0) {
+                alert("Add text");
+                return;
+              }
+              handleTask(newTask);
+            }}
+            className="bg-sunsetOrange rounded-md px-3 py-2 text-white opacity-90 hover:opacity-100"
+          >
+            {currentTask ? "Update" : "Add"}
           </button>
         </div>
       </div>

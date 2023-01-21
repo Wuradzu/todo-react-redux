@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./components/Header";
 import TodoList from "./components/TodoList";
@@ -7,7 +7,6 @@ import {
   addTodo,
   sortTodo,
   updateTodo,
-  toggleCompleted,
 } from "./store/toDoSlice";
 import Modal from "./components/Modal";
 import Empty from "./components/Empty";
@@ -15,74 +14,56 @@ import { useEffect } from "react";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
-  const [newTask, setNewTask] = useState("");
+  const [updateTask, setUpdateTask] = useState("");
   const [currentTask, setCurrentTask] = useState(null);
 
   const dispatch = useDispatch();
   const todoList = useSelector((state) => state.todo.todoList);
   const sortCriteria = useSelector((state) => state.todo.sortCriteria);
-  
-  const sortedTodoList = todoList.filter((todo) =>{
-    console.log(todo)
-    console.log(sortCriteria)
-    if(sortCriteria === 'all'){
-      return true
-    }
-    if(sortCriteria === 'completed'){
-      return todo.completed === true
-    }
-    if(sortCriteria === 'notcompleted'){
-      return todo.completed === false
-    }
-  })
 
-  const handleTask = (e) => {
-    e.preventDefault();
+  const sortedTodoList = useMemo(() => {
+    return todoList.filter((todo) => {
+      if (sortCriteria === "all") {
+        return true;
+      }
+      if (sortCriteria === "completed") {
+        return todo.completed === true;
+      }
+      if (sortCriteria === "notcompleted") {
+        return todo.completed === false;
+      }
+    });
+  }, [todoList, sortCriteria]);
 
-    if(newTask.trim().length === 0){
-      alert('Add text')
-      return
-    }
-
+  const handleTask = (newTask) => {
     if (currentTask) {
       const task = {
         id: currentTask,
-        task: newTask
-      }
+        task: newTask,
+      };
 
-      dispatch(updateTodo(task))
-      setCurrentTask(null)
-      setNewTask('')
-      setShowModal(false)
-
+      dispatch(updateTodo(task));
+      setCurrentTask(null);
+      setUpdateTask("");
+      setShowModal(false);
     } else {
-
       const task = {
         task: newTask,
         id: Date.now(),
       };
 
       dispatch(addTodo(task));
+      setUpdateTask("");
 
       setShowModal(false);
-      setNewTask("");
     }
   };
 
   const handleUpdate = (id, task) => {
     setShowModal(true);
-    setCurrentTask(id)
-    setNewTask(task)
+    setCurrentTask(id);
+    setUpdateTask(task);
   };
-
-  useEffect(() => {
-    if (todoList?.length > 0) {
-      localStorage.setItem("todoList", JSON.stringify(todoList));
-    }
-    if(todoList.length === 0){
-      localStorage.clear()
-    }
-  }, [todoList]);
 
   useEffect(() => {
     const localStore = JSON.parse(localStorage.getItem("todoList"));
@@ -91,14 +72,22 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (todoList?.length > 0) {
+      localStorage.setItem("todoList", JSON.stringify(todoList));
+    }
+    if (todoList.length === 0) {
+      localStorage.clear();
+    }
+  }, [todoList]);
+
   return (
     <div className="font-Poppins">
       <Header setShowModal={setShowModal} />
       {showModal && (
         <Modal
           setShowModal={setShowModal}
-          newTask={newTask}
-          setNewTask={setNewTask}
+          updateTask={updateTask}
           handleTask={handleTask}
           currentTask={currentTask}
         />
